@@ -1,0 +1,45 @@
+plugins {
+	id 'fabric-loom' version '1.6+'
+	id 'maven-publish'
+}
+
+version = '1.1.0'
+group = 'com.mobhunt'
+
+base {
+	archivesName = project.archives_base_name
+}
+
+repositories {
+	// Fabric maven is included by default via loom
+}
+
+loom {
+    splitEnvironmentSourceSets()
+}
+
+dependencies {
+	minecraft "com.mojang:minecraft:1.21"
+	mappings "net.fabricmc:yarn:1.21+build.1:v2"
+
+	modImplementation "net.fabricmc:fabric-loader:0.16.0"
+
+	modImplementation "net.fabricmc.fabric-api:fabric-api:0.100.0+1.21"
+}
+
+java {
+	sourceCompatibility = JavaVersion.VERSION_21
+	targetCompatibility = JavaVersion.VERSION_21
+}
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(21)
+	}
+}
+
+jar {
+	from('LICENSE') {
+		rename { "${it}_${archivesBaseName}" }
+	}
+}

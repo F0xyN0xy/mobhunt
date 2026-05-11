@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "id": "mobhunt",
+  "version": "1.0.1",
+  "name": "MobHunt - Kill or Die",
+  "description": "Kill a mob every 10 minutes or you die! Perfect for Hardcore worlds.",
+  "authors": ["FoxyMigurdia"],
+  "license": "MIT",
+  "environment": "*",
+  "entrypoints": {
+    "main": ["com.mobhunt.MobHuntMod"]
+  },
+  "depends": {
+    "fabricloader": ">=0.15.0",
+    "fabric-api": "*",
+    "minecraft": ">=1.21",
+    "java": ">=17"
+  },
+  "icon": "icon.png",
+  "contact": {
+    "homepage": "https://github.com/F0xyN0xy/mobhunt",
+    "sources": "https://github.com/yourname/mobhunt",
+    "issues": "https://github.com/yourname/mobhunt/issues"
+  },
+  "custom": {
+    "modmenu": {
+      "badges": ["library"],
+      "links": {
+        "modmenu.discord": "https://discord.gg/yourlink"
+      }
+    }
+  }
+}
