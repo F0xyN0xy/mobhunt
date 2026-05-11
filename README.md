@@ -1,6 +1,6 @@
 # ☠ MobHunt Mod (Fabric) — Kill or Die!
 
-A Minecraft **Fabric** mod for **Minecraft 1.20.1** that forces you to kill a mob every **10 minutes** or you die instantly. Perfect for Hardcore worlds!
+A Minecraft **Fabric** mod for **Minecraft 1.21** that forces you to kill a mob every **10 minutes** or you die instantly. Perfect for Hardcore worlds!
 
 ---
 
@@ -25,14 +25,14 @@ A Minecraft **Fabric** mod for **Minecraft 1.20.1** that forces you to kill a mo
 ## 🛠 Installation (No build needed!)
 
 ### Requirements
-- **Minecraft Java Edition 1.20.1**
+- **Minecraft Java Edition 1.21**
 - **Fabric Loader 0.15+** → [Install here](https://fabricmc.net/use/installer/)
 - **Fabric API 0.92+** → [Download here](https://modrinth.com/mod/fabric-api/versions?g=1.20.1)
 
 ### Steps
-1. Install Fabric Loader for 1.20.1
+1. Install Fabric Loader for 1.21
 2. Download Fabric API and put it in your `mods/` folder
-3. Put `mobhunt-1.0.0.jar` in your `.minecraft/mods/` folder
+3. Put `mobhunt-1.1.0.jar` in your `.minecraft/mods/` folder
 4. Launch Minecraft with the Fabric profile
 5. Create a **Hardcore world** for the ultimate experience!
 
@@ -41,7 +41,7 @@ A Minecraft **Fabric** mod for **Minecraft 1.20.1** that forces you to kill a mo
 ## 🔨 Building from Source
 
 ### Prerequisites
-- **JDK 17** → [Download](https://adoptium.net/)
+- **JDK 17** or **JDK 21** → [Download](https://adoptium.net/)
 - **Git**
 
 ### Steps

@@ -16,17 +16,17 @@
     "minecraft": ">=1.21",
     "java": ">=17"
   },
-  "icon": "icon.png",
+  "icon": "assets/mobhunt/icon.png",
   "contact": {
     "homepage": "https://github.com/F0xyN0xy/mobhunt",
-    "sources": "https://github.com/yourname/mobhunt",
-    "issues": "https://github.com/yourname/mobhunt/issues"
+    "sources": "https://github.com/F0xyN0xy/mobhunt",
+    "issues": "https://github.com/F0xyN0xy/mobhunt/issues"
   },
   "custom": {
     "modmenu": {
       "badges": ["library"],
       "links": {
-        "modmenu.discord": "https://discord.gg/yourlink"
+        "modmenu.discord": "https://discord.gg/uA56XBqMs"
       }
     }
   }
