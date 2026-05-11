@@ -11,11 +11,7 @@ base {
 }
 
 repositories {
-	// Fabric maven is included by default via loom
-}
-
-loom {
-    splitEnvironmentSourceSets()
+	maven { url "https://maven.terraformersmc.com/releases" }
 }
 
 dependencies {
@@ -25,19 +21,15 @@ dependencies {
 	modCompileOnly "com.terraformersmc:modmenu:9.0.0"
 
 	modImplementation "net.fabricmc:fabric-loader:0.16.0"
-
 	modImplementation "net.fabricmc.fabric-api:fabric-api:0.100.0+1.21"
-}
-
-java {
-	sourceCompatibility = JavaVersion.VERSION_21
-	targetCompatibility = JavaVersion.VERSION_21
 }
 
 java {
 	toolchain {
 		languageVersion = JavaLanguageVersion.of(21)
 	}
+	sourceCompatibility = JavaVersion.VERSION_21
+	targetCompatibility = JavaVersion.VERSION_21
 }
 
 jar {
