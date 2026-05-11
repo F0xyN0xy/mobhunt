@@ -32,7 +32,7 @@ A Minecraft **Fabric** mod for **Minecraft 1.21** that forces you to kill a mob 
 ### Steps
 1. Install Fabric Loader for 1.21
 2. Download Fabric API and put it in your `mods/` folder
-3. Put `mobhunt-1.1.0.jar` in your `.minecraft/mods/` folder
+3. Put `mobhunt-1.0.0.jar` in your `.minecraft/mods/` folder
 4. Launch Minecraft with the Fabric profile
 5. Create a **Hardcore world** for the ultimate experience!
 
