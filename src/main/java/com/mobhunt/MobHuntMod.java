@@ -12,7 +12,7 @@ import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
-import net.minecraft.network.packet.s2c.play.OverlayMessageS2CPacket;
+import net.minecraft.network.packet.s2c.play.GameMessageS2CPacket;
 import net.minecraft.world.GameMode;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import org.slf4j.Logger;
@@ -211,9 +211,9 @@ public class MobHuntMod implements ModInitializer {
             icon = "☠";
         }
 
-        player.networkHandler.sendPacket(new OverlayMessageS2CPacket(
-                Text.literal(String.format("%s Kill timer: %d:%02d", icon, minutes, seconds))
-                        .formatted(color)
-        ));
+        String timeStr = String.format("%s Kill timer: %d:%02d", icon, minutes, seconds);
+        player.networkHandler.sendPacket(
+            new GameMessageS2CPacket(Text.literal(timeStr).formatted(color), true)
+        );
     }
 }

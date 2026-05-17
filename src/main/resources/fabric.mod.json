@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "mobhunt",
-  "version": "1.2.0",
+  "version": "1.2.1+1.20.1",
   "name": "MobHunt - Kill or Die",
   "description": "Kill a mob every X minutes or you die! Perfect for Hardcore worlds.",
   "authors": ["FoxyMigurdia"],
@@ -11,10 +11,10 @@
     "main": ["com.mobhunt.MobHuntMod"]
   },
   "depends": {
-    "fabricloader": ">=0.16.0",
+    "fabricloader": ">=0.15.11",
     "fabric-api": "*",
-    "minecraft": [">=1.21", "<1.22"],
-    "java": ">=21"
+    "minecraft": [">=1.20.1", "<1.21"],
+    "java": ">=17"
   },
   "icon": "assets/mobhunt/icon.png",
   "contact": {
