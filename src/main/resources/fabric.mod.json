@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "mobhunt",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "name": "MobHunt - Kill or Die",
   "description": "Kill a mob every 10 minutes or you die! Perfect for Hardcore worlds.",
   "authors": ["FoxyMigurdia"],
@@ -24,10 +24,18 @@
   },
   "custom": {
     "modmenu": {
-      "badges": ["library"],
       "links": {
-        "modmenu.discord": "https://discord.gg/uA56XBqMs"
-      }
+        "modmenu.discord": "https://discord.gg/Sc6UeGVc4J"
+      },
+      "badges": [ "library", "deprecated" ],
+      "parent": {
+        "id": "mobhunt",
+        "name": "MobHunt - Kill or Die",
+        "description": "Kill a mob every 10 minutes or you die! Perfect for Hardcore worlds.",
+        "icon": "assets/mobhunt/icon.png",
+        "badges": [ "library" ]
+      },
+      "update_checker": true
     }
   }
 }
