@@ -14,7 +14,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.network.packet.s2c.play.OverlayMessageS2CPacket;
 import net.minecraft.world.GameMode;
-import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,75 +27,52 @@ public class MobHuntMod implements ModInitializer {
     public static final String MOD_ID = "mobhunt";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
-    // 10 minutes = 12000 ticks. Change this to adjust the timer!
-    public static final int KILL_TIMER_TICKS = 12000;
+    public static final int DEFAULT_KILL_TIMER_TICKS = 12000;
 
-    // Ticks since last kill per player
+    private static int killTimerTicks = DEFAULT_KILL_TIMER_TICKS;
     private static final Map<UUID, Integer> ticksSinceKill = new HashMap<>();
-    // Whether the player has killed their first mob (to start the timer)
-    private static final Map<UUID, Boolean> timerStarted = new HashMap<>();
-    // Whether the game has been started (globally)
     private static boolean gameActive = false;
-    // Game mode: "survival" or "hardcore"
-    private static String gameModeSetting = "survival";
 
     @Override
     public void onInitialize() {
-        LOGGER.info("MobHunt Mod loaded! Use /start survival or /start hardcore to begin.");
+        LOGGER.info("MobHunt Mod loaded! Use /start [minutes] to begin.");
 
         // ── COMMAND REGISTRATION ─────────────────────────────────────────────
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
             dispatcher.register(
                     CommandManager.literal("start")
-                            // /start survival
-                            .then(CommandManager.argument("mode", StringArgumentType.word())
-                                    .suggests((ctx, builder) -> {
-                                        builder.suggest("survival");
-                                        builder.suggest("hardcore");
-                                        return builder.buildFuture();
-                                    })
+                            .then(CommandManager.argument("minutes", IntegerArgumentType.integer(1, 120))
                                     .executes(ctx -> {
-                                        String mode = StringArgumentType.getString(ctx, "mode");
-                                        if (!mode.equals("survival") && !mode.equals("hardcore")) {
-                                            ctx.getSource().sendError(Text.literal(
-                                                            "Usage: /start survival  or  /start hardcore")
-                                                    .formatted(Formatting.RED));
-                                            return 0;
-                                        }
-                                        return startGame(ctx.getSource().getServer(), mode);
+                                        int minutes = IntegerArgumentType.getInteger(ctx, "minutes");
+                                        return startGame(ctx.getSource().getServer(), minutes * 60 * 20);
                                     })
                             )
-                            // /start (no argument — defaults to survival)
-                            .executes(ctx -> {
-                                ctx.getSource().sendError(Text.literal(
-                                                "Usage: /start survival  or  /start hardcore")
-                                        .formatted(Formatting.RED));
-                                return 0;
-                            })
+                            .executes(ctx -> startGame(ctx.getSource().getServer(), DEFAULT_KILL_TIMER_TICKS))
+            );
+
+            // /stophunt — resets everything so a new game can begin
+            dispatcher.register(
+                    CommandManager.literal("stophunt")
+                            .executes(ctx -> stopGame(ctx.getSource().getServer()))
             );
         });
 
-        // ── SERVER TICK: count up timers and kill slow players ───────────────
+        // ── SERVER TICK ──────────────────────────────────────────────────────
         ServerTickEvents.END_SERVER_TICK.register(server -> {
             if (!gameActive) return;
 
             for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
                 UUID uuid = player.getUuid();
 
-                if (!timerStarted.getOrDefault(uuid, false)) continue;
-
                 int ticks = ticksSinceKill.getOrDefault(uuid, 0) + 1;
                 ticksSinceKill.put(uuid, ticks);
 
-                int remaining = KILL_TIMER_TICKS - ticks;
-                int remSec = remaining / 20;
+                int remaining = killTimerTicks - ticks;
 
-                // Update action bar every second
                 if (ticks % 20 == 0) {
-                    sendActionBar(player, remSec);
+                    sendActionBar(player, remaining / 20, killTimerTicks / 20);
                 }
 
-                // Warning messages
                 if (remaining == 3000) {
                     player.sendMessage(Text.literal("⚠ MobHunt: 2:30 left — KILL SOMETHING!")
                             .formatted(Formatting.YELLOW), false);
@@ -107,142 +84,126 @@ public class MobHuntMod implements ModInitializer {
                             .formatted(Formatting.DARK_RED, Formatting.BOLD), false);
                 }
 
-                // Time's up — kill the player
                 if (remaining <= 0) {
                     player.kill();
                     player.sendMessage(Text.literal("☠ You failed to kill a mob in time! Game Over.")
                             .formatted(Formatting.DARK_RED, Formatting.BOLD), false);
-
                     server.getPlayerManager().broadcast(
                             Text.literal("☠ " + player.getName().getString() +
                                             " was too slow! They didn't kill a mob in time.")
-                                    .formatted(Formatting.DARK_RED),
-                            false
-                    );
-
+                                    .formatted(Formatting.DARK_RED), false);
                     ticksSinceKill.remove(uuid);
-                    timerStarted.remove(uuid);
                 }
             }
         });
 
-        // ── MOB DEATH: check if a player landed the kill ─────────────────────
+        // ── MOB DEATH ────────────────────────────────────────────────────────
         ServerLivingEntityEvents.AFTER_DEATH.register((entity, damageSource) -> {
             if (!gameActive) return;
             if (entity instanceof PlayerEntity) return;
             if (!(entity instanceof HostileEntity || entity instanceof AnimalEntity)) return;
 
             if (damageSource.getAttacker() instanceof ServerPlayerEntity killer) {
-                UUID uuid = killer.getUuid();
-
-                if (!timerStarted.getOrDefault(uuid, false)) {
-                    timerStarted.put(uuid, true);
-                    ticksSinceKill.put(uuid, 0);
-                    killer.sendMessage(Text.literal(
-                                    "✅ MobHunt timer started! Kill a mob every 10 minutes or you die!")
-                            .formatted(Formatting.GREEN, Formatting.BOLD), false);
-                } else {
-                    ticksSinceKill.put(uuid, 0);
-                    killer.sendMessage(Text.literal("✅ Timer reset! Next kill required in 10:00")
-                            .formatted(Formatting.GREEN), false);
-                }
+                ticksSinceKill.put(killer.getUuid(), 0);
+                int totalSec = killTimerTicks / 20;
+                int min = totalSec / 60;
+                int sec = totalSec % 60;
+                killer.sendMessage(Text.literal(
+                                String.format("✅ Timer reset! Next kill required in %d:%02d", min, sec))
+                        .formatted(Formatting.GREEN), false);
             }
         });
 
-        // ── PLAYER JOIN: put them in Adventure mode lobby ────────────────────
+        // ── PLAYER JOIN ──────────────────────────────────────────────────────
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
             ServerPlayerEntity player = handler.player;
             if (!gameActive) {
-                // Lobby: adventure mode, can't interact with the world
                 player.changeGameMode(GameMode.ADVENTURE);
                 player.sendMessage(Text.literal(
                                 "⚔ MobHunt Lobby — Waiting for the host to start the game.")
                         .formatted(Formatting.GOLD, Formatting.BOLD), false);
                 player.sendMessage(Text.literal(
-                                "The host can run: /start survival  or  /start hardcore")
+                                "Host: /start [minutes]  (default: 10 minutes)")
                         .formatted(Formatting.GRAY), false);
             } else {
-                // Late join during an active game — put them in the right mode
-                applyGameMode(player);
+                player.changeGameMode(GameMode.SURVIVAL);
+                if (!ticksSinceKill.containsKey(player.getUuid())) {
+                    ticksSinceKill.put(player.getUuid(), 0);
+                }
+                int remaining = (killTimerTicks - ticksSinceKill.get(player.getUuid())) / 20;
+                int min = remaining / 60;
+                int sec = remaining % 60;
                 player.sendMessage(Text.literal(
-                                "⚔ MobHunt is active! Kill a mob to start your 10-minute timer.")
+                                String.format("⚔ MobHunt is active! Time remaining: %d:%02d", min, sec))
                         .formatted(Formatting.GOLD, Formatting.BOLD), false);
             }
         });
 
-        // ── PLAYER LEAVE: clean up data ───────────────────────────────────────
-        ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
-            UUID uuid = handler.player.getUuid();
-            ticksSinceKill.remove(uuid);
-            timerStarted.remove(uuid);
-        });
+        // ── PLAYER LEAVE ─────────────────────────────────────────────────────
+        // Timer is intentionally kept on disconnect so it survives rejoins.
+        // It is only cleared on death, or when /stophunt is used.
     }
 
-    /**
-     * Start the MobHunt game for all online players.
-     */
-    private int startGame(net.minecraft.server.MinecraftServer server, String mode) {
+    private static int startGame(net.minecraft.server.MinecraftServer server, int timerTicks) {
         if (gameActive) {
             server.getPlayerManager().broadcast(
-                    Text.literal("⚠ MobHunt is already running!")
-                            .formatted(Formatting.YELLOW),
-                    false
-            );
+                    Text.literal("⚠ MobHunt is already running!").formatted(Formatting.YELLOW), false);
             return 0;
         }
 
         gameActive = true;
-        gameModeSetting = mode;
+        killTimerTicks = timerTicks;
 
-        // Announce and switch all players to the chosen game mode
+        int totalSec = timerTicks / 20;
+        int min = totalSec / 60;
+        int sec = totalSec % 60;
+
         server.getPlayerManager().broadcast(
-                Text.literal("⚔ MobHunt has started in " + mode.toUpperCase() + " mode! " +
-                                "Kill a mob to start your 10-minute timer!")
-                        .formatted(Formatting.GOLD, Formatting.BOLD),
-                false
-        );
+                Text.literal(String.format("⚔ MobHunt started! You have %d:%02d to kill a mob — GO!", min, sec))
+                        .formatted(Formatting.GOLD, Formatting.BOLD), false);
 
         for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
-            applyGameMode(player);
-            player.sendMessage(Text.literal(
-                            "✅ You are now in " + mode + " mode. Kill your first mob to start the timer!")
-                    .formatted(Formatting.GREEN), false);
+            player.changeGameMode(GameMode.SURVIVAL);
+            ticksSinceKill.put(player.getUuid(), 0);
         }
 
-        LOGGER.info("MobHunt started in {} mode.", mode);
+        LOGGER.info("MobHunt started with a {}:{} timer.", min, String.format("%02d", sec));
         return 1;
     }
 
-    /**
-     * Apply the correct game mode to a player based on gameModeSetting.
-     * Note: Fabric doesn't have a true "hardcore" GameMode — we use Survival
-     * and rely on the server's hardcore flag, or you can set it per-world.
-     * If you want the kill-on-death behaviour of hardcore, handle it in the
-     * AFTER_DEATH event above (e.g. ban the player or set them to spectator).
-     */
-    private void applyGameMode(ServerPlayerEntity player) {
-        if (gameModeSetting.equals("hardcore")) {
-            player.changeGameMode(GameMode.SURVIVAL);
-            // Optional: mark the player as "hardcore" — they get spectator on death
-            // You could add a Set<UUID> hardcorePlayers and handle it in AFTER_DEATH.
-        } else {
-            player.changeGameMode(GameMode.SURVIVAL);
+    private static int stopGame(net.minecraft.server.MinecraftServer server) {
+        if (!gameActive) {
+            server.getPlayerManager().broadcast(
+                    Text.literal("⚠ MobHunt is not running!").formatted(Formatting.YELLOW), false);
+            return 0;
         }
+
+        gameActive = false;
+        killTimerTicks = DEFAULT_KILL_TIMER_TICKS;
+        ticksSinceKill.clear();
+
+        server.getPlayerManager().broadcast(
+                Text.literal("🛑 MobHunt has been stopped. Use /start to begin a new game.")
+                        .formatted(Formatting.RED, Formatting.BOLD), false);
+
+        for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
+            player.changeGameMode(GameMode.ADVENTURE);
+        }
+
+        LOGGER.info("MobHunt stopped.");
+        return 1;
     }
 
-    /**
-     * Send a countdown to the player's action bar (above hotbar).
-     */
-    private void sendActionBar(ServerPlayerEntity player, int secondsLeft) {
+    private static void sendActionBar(ServerPlayerEntity player, int secondsLeft, int totalSec) {
         int minutes = secondsLeft / 60;
         int seconds = secondsLeft % 60;
 
         Formatting color;
         String icon;
-        if (secondsLeft > 300) {
+        if (secondsLeft > totalSec / 2) {
             color = Formatting.GREEN;
             icon = "⚔";
-        } else if (secondsLeft > 60) {
+        } else if (secondsLeft > totalSec / 10) {
             color = Formatting.YELLOW;
             icon = "⚠";
         } else {
@@ -250,9 +211,9 @@ public class MobHuntMod implements ModInitializer {
             icon = "☠";
         }
 
-        String timeStr = String.format("%s Kill timer: %d:%02d", icon, minutes, seconds);
-        player.networkHandler.sendPacket(
-                new OverlayMessageS2CPacket(Text.literal(timeStr).formatted(color))
-        );
+        player.networkHandler.sendPacket(new OverlayMessageS2CPacket(
+                Text.literal(String.format("%s Kill timer: %d:%02d", icon, minutes, seconds))
+                        .formatted(color)
+        ));
     }
 }
