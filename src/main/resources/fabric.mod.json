@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "mobhunt",
-  "version": "1.2.1+1.20.1",
+  "version": "1.2.2+1.20.1",
   "name": "MobHunt - Kill or Die",
   "description": "Kill a mob every X minutes or you die! Perfect for Hardcore worlds.",
   "authors": ["FoxyMigurdia"],
