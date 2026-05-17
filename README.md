@@ -1,14 +1,14 @@
 # ☠ MobHunt Mod (Fabric) — Kill or Die!
 
 ![GitHub release](https://img.shields.io/github/v/release/F0xyN0xy/MobHunt)
-![Minecraft](https://img.shields.io/badge/Minecraft-1.21-green)
+![Minecraft](https://img.shields.io/badge/Minecraft-1.20-green)
 ![Loader](https://img.shields.io/badge/Loader-Fabric-orange)
 [![Modrinth](https://img.shields.io/modrinth/dt/fx5GXOIT)](https://modrinth.com)
 [![Discord](https://img.shields.io/discord/1466514131493588995?label=Discord&logo=discord)](https://discord.gg/Sc6UeGVc4J)
 ![License](https://img.shields.io/github/license/F0xyN0xy/MobHunt)
 ![Issues](https://img.shields.io/github/issues/F0xyN0xy/MobHunt)
 
-A Minecraft **Fabric** mod that forces every player to kill a mob on a repeating countdown timer — or die instantly. Supports **1.21–1.21.x**, customizable timers, and multiplayer out of the box.
+A Minecraft **Fabric** mod that forces every player to kill a mob on a repeating countdown timer — or die instantly. Supports **1.20–1.20.x**, customizable timers, and multiplayer out of the box.
 
 ---
 
@@ -65,8 +65,8 @@ The kill timer colour scales with how much time is left relative to the total:
 
 ### Requirements
 
-- **Minecraft Java Edition 1.21–1.21.x**
-- **Fabric Loader 0.16.0+** → [Install here](https://fabricmc.net/use/installer/)
+- **Minecraft Java Edition 1.20–1.20.x**
+- **Fabric Loader 0.15.11+** → [Install here](https://fabricmc.net/use/installer/)
 - **Fabric API** (matching your MC version) → [Download here](https://modrinth.com/mod/fabric-api)
 - **Mod Menu** *(optional, for mod list UI)* → [Download here](https://modrinth.com/mod/modmenu)
 
@@ -76,16 +76,16 @@ Mod Menu releases are version-specific. Use the right one for your Minecraft ver
 
 | Minecraft | Mod Menu |
 |---|---|
-| 1.21 / 1.21.1 | 11.x (e.g. `11.0.4`) |
-| 1.21.3 | 12.x (e.g. `12.0.1`) |
-| 1.21.4 | 13.x (e.g. `13.0.4`) |
-| 1.21.5 | 14.x (e.g. `14.0.2`) |
+| 1.20 / 1.20.1 | 11.x (e.g. `11.0.4`) |
+| 1.20.3 | 12.x (e.g. `12.0.1`) |
+| 1.20.4 | 13.x (e.g. `13.0.4`) |
+| 1.20.5 | 14.x (e.g. `14.0.2`) |
 
 MobHunt compiles against `11.0.4` (the lowest common API) and marks Mod Menu as optional, so it works correctly regardless of which version you install — or without it entirely.
 
 ### Steps
 
-1. Install Fabric Loader 0.16.0+ for your MC version
+1. Install Fabric Loader 0.15.11+ for your MC version
 2. Download Fabric API and place it in your `mods/` folder
 3. Place `mobhunt-<version>.jar` in your `mods/` folder
 4. *(Optional)* Add the correct Mod Menu jar for your MC version
@@ -97,7 +97,7 @@ MobHunt compiles against `11.0.4` (the lowest common API) and marks Mod Menu as 
 
 ### Prerequisites
 
-- **JDK 21** → [Download](https://adoptium.net/)
+- **JDK 17** → [Download](https://adoptium.net/)
 - **Git**
 
 ### Steps
