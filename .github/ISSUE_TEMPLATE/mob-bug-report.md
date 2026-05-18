@@ -1,6 +1,6 @@
 ---
 name: Mob bug report
-about: Create a report to help me improve
+about: Tell me what mob didn't get recognized
 title: MOB BUG
 labels: ''
 assignees: ''
