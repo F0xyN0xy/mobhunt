@@ -1,14 +1,14 @@
 # ☠ MobHunt Mod (Fabric) — Kill or Die!
 
 ![GitHub release](https://img.shields.io/github/v/release/F0xyN0xy/MobHunt)
-![Minecraft](https://img.shields.io/badge/Minecraft-1.20-green)
+![Minecraft](https://img.shields.io/badge/Minecraft-1.21-green)
 ![Loader](https://img.shields.io/badge/Loader-Fabric-orange)
 [![Modrinth](https://img.shields.io/modrinth/dt/fx5GXOIT)](https://modrinth.com)
 [![Discord](https://img.shields.io/discord/1466514131493588995?label=Discord&logo=discord)](https://discord.gg/Sc6UeGVc4J)
 ![License](https://img.shields.io/github/license/F0xyN0xy/MobHunt)
 ![Issues](https://img.shields.io/github/issues/F0xyN0xy/MobHunt)
 
-A Minecraft **Fabric** mod that forces every player to kill a mob on a repeating countdown timer — or die instantly. Supports **1.20–1.20.x**, customizable timers, and multiplayer out of the box.
+A Minecraft **Fabric** mod that forces every player to kill a mob on a repeating countdown timer — or die instantly. Supports **1.21–1.21.x**, customizable timers, and multiplayer out of the box.
 
 ---
 
@@ -97,7 +97,7 @@ MobHunt compiles against `11.0.4` (the lowest common API) and marks Mod Menu as 
 
 ### Prerequisites
 
-- **JDK 17** → [Download](https://adoptium.net/)
+- **JDK 21** → [Download](https://adoptium.net/)
 - **Git**
 
 ### Steps
