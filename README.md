@@ -3,7 +3,7 @@
 ![GitHub release](https://img.shields.io/github/v/release/F0xyN0xy/MobHunt)
 ![Minecraft](https://img.shields.io/badge/Minecraft-1.21-green)
 ![Loader](https://img.shields.io/badge/Loader-Fabric-orange)
-[![Modrinth](https://img.shields.io/modrinth/dt/fx5GXOIT)](https://modrinth.com)
+[![Modrinth](https://img.shields.io/modrinth/dt/fx5GXOIT)](https://modrinth.com/mod/mobhunt)
 [![Discord](https://img.shields.io/discord/1466514131493588995?label=Discord&logo=discord)](https://discord.gg/Sc6UeGVc4J)
 ![License](https://img.shields.io/github/license/F0xyN0xy/MobHunt)
 ![Issues](https://img.shields.io/github/issues/F0xyN0xy/MobHunt)
